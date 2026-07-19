@@ -55,10 +55,22 @@ function ProbabilityChart({ run, cursor }: { run: AgentRun; cursor: number }) {
     x: inset.left + (index / Math.max(1, run.timeline.length - 1)) * innerWidth,
     y: inset.top + (1 - tick.probabilities[series] / 100) * innerHeight,
   });
-  const paths = [0, 1, 2].map((series) => run.timeline
-    .map((tick, index) => point(tick, index, series))
-    .map((item, index) => `${index ? "L" : "M"}${item.x.toFixed(1)},${item.y.toFixed(1)}`)
-    .join(" "));
+  const paths = [0, 1, 2].map((series) => {
+    const segments: Array<Array<{ x: number; y: number }>> = [];
+    let segment: Array<{ x: number; y: number }> = [];
+    run.timeline.forEach((tick, index) => {
+      if (tick.suspended || tick.probabilities[series] <= 0) {
+        if (segment.length > 1) segments.push(segment);
+        segment = [];
+        return;
+      }
+      segment.push(point(tick, index, series));
+    });
+    if (segment.length > 1) segments.push(segment);
+    return segments.map((items) => items
+      .map((item, index) => `${index ? "L" : "M"}${item.x.toFixed(1)},${item.y.toFixed(1)}`)
+      .join(" "));
+  });
   const cursorX = inset.left + (Math.min(cursor, run.timeline.length - 1) / Math.max(1, run.timeline.length - 1)) * innerWidth;
   const scoreChanges = run.timeline.map((tick, index) => ({ tick, index })).filter(({ tick, index }) => {
     const previous = run.timeline[index - 1];
@@ -86,9 +98,21 @@ function ProbabilityChart({ run, cursor }: { run: AgentRun; cursor: number }) {
             </g>
           );
         })}
-        <path className="series home" d={paths[0]} />
-        <path className="series draw" d={paths[1]} />
-        <path className="series away" d={paths[2]} />
+        {run.timeline.map((tick, index) => tick.suspended ? (
+          <rect
+            className="suspension-band"
+            key={`suspension-${tick.ts}`}
+            x={Math.max(inset.left, point(tick, index, 0).x - innerWidth / run.timeline.length / 2)}
+            y={inset.top}
+            width={innerWidth / run.timeline.length}
+            height={innerHeight}
+          >
+            <title>Market suspended: agent halted</title>
+          </rect>
+        ) : null)}
+        {paths[0].map((path) => <path className="series home" d={path} key={`home-${path}`} />)}
+        {paths[1].map((path) => <path className="series draw" d={path} key={`draw-${path}`} />)}
+        {paths[2].map((path) => <path className="series away" d={path} key={`away-${path}`} />)}
         <line className="cursor-line" x1={cursorX} x2={cursorX} y1={inset.top} y2={height - inset.bottom} />
         <text className="axis-label" x={inset.left} y={height - 9}>{time(run.timeline[0].ts)}</text>
         <text className="axis-label" x={width - inset.right} y={height - 9} textAnchor="end">{time(run.timeline.at(-1)!.ts)}</text>

@@ -107,6 +107,7 @@ code, .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monosp
 .series.home { stroke: var(--green); }
 .series.draw { stroke: var(--amber); }
 .series.away { stroke: var(--cyan); }
+.suspension-band { fill: rgba(105, 115, 108, .1); stroke: rgba(105, 115, 108, .28); stroke-width: 1; stroke-dasharray: 3 3; }
 .goal-line { stroke: rgba(219, 91, 69, .38); stroke-width: 1; stroke-dasharray: 4 4; }
 .goal-dot { fill: var(--coral); stroke: white; stroke-width: 2; }
 .cursor-line { stroke: #1d2822; stroke-width: 1.5; stroke-dasharray: 3 3; }
