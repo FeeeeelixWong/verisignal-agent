@@ -112,9 +112,14 @@ code, .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monosp
 .goal-dot { fill: var(--coral); stroke: white; stroke-width: 2; }
 .cursor-line { stroke: #1d2822; stroke-width: 1.5; stroke-dasharray: 3 3; }
 .execution-tape { min-height: 360px; }
-.tape-header { min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0 15px; color: #5a655e; background: #f7f8f6; border-bottom: 1px solid var(--line); font-size: 9px; font-weight: 800; }
+.tape-header { min-height: 44px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; padding: 6px 15px; color: #5a655e; background: #f7f8f6; border-bottom: 1px solid var(--line); font-size: 9px; font-weight: 800; }
 .tape-header div { display: flex; align-items: center; gap: 6px; }
 .tape-header > span { font-family: "SFMono-Regular", Consolas, monospace; }
+.key-decisions { display: flex; align-items: center; justify-content: center; gap: 5px; }
+.key-decisions button { min-height: 25px; padding: 0 7px; color: #5d6660; background: white; border: 1px solid #d5dcd7; border-radius: 4px; font: 800 7px/1 "SFMono-Regular", Consolas, monospace; }
+.key-decisions button:hover, .key-decisions button.selected { color: var(--cyan); border-color: #8fb1df; }
+.key-decisions button.positive.selected { color: var(--green); border-color: #83bba5; background: #edf7f2; }
+.key-decisions button.negative.selected { color: var(--coral); border-color: #dfa297; background: #fbefed; }
 .decision-table { display: grid; }
 .decision-row { min-height: 41px; display: grid; grid-template-columns: 72px 72px minmax(100px, 1fr) 65px 74px 86px; align-items: center; gap: 8px; width: 100%; padding: 0 13px; color: #465049; text-align: left; background: white; border: 0; border-bottom: 1px solid #e1e5e2; }
 button.decision-row:hover { background: #f5f8f5; }
@@ -206,6 +211,7 @@ footer code { color: #4d5750; }
   .chart-wrap { min-height: 210px; overflow-x: auto; }
   .chart-wrap svg { min-width: 680px; }
   .execution-tape { overflow-x: auto; }
+  .tape-header { min-width: 650px; }
   .decision-table { min-width: 650px; }
   footer { align-items: flex-start; flex-direction: column; justify-content: center; padding: 9px 12px; }
 }

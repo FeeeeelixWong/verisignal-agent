@@ -163,6 +163,18 @@ function App() {
     || visibleDecisions.at(-1);
   const activeTick = run?.timeline[Math.min(cursor, (run?.timeline.length || 1) - 1)];
   const automated = Boolean(run && cursor >= run.decisions.length - 1);
+  const keyDecisions = useMemo(() => {
+    if (!run) return [];
+    const entry = run.decisions.find((decision) => decision.action === "enter");
+    const exit = run.decisions.find((decision) => decision.action === "exit" || decision.action === "settle");
+    const halts = run.decisions.filter((decision) => decision.action === "halt");
+    return [entry, exit, halts[halts.length - 1]].filter((decision): decision is DecisionRecord => Boolean(decision));
+  }, [run]);
+
+  const inspectDecision = (sequence: number) => {
+    setSelectedSequence(sequence);
+    setPlaying(false);
+  };
 
   if (loading) {
     return (
@@ -265,14 +277,28 @@ function App() {
           </div>
           <ProbabilityChart run={run} cursor={cursor} />
           <div className="execution-tape">
-            <div className="tape-header"><div><SquareTerminal size={15} /> Agent decision tape</div><span>{visibleDecisions.length}/{run.decisions.length} actions</span></div>
+            <div className="tape-header">
+              <div><SquareTerminal size={15} /> Agent decision tape</div>
+              <nav className="key-decisions" aria-label="Key decision receipts">
+                {keyDecisions.map((decision) => (
+                  <button
+                    className={`${actionTone(decision.action)} ${selected?.sequence === decision.sequence ? "selected" : ""}`}
+                    key={decision.sequence}
+                    onClick={() => inspectDecision(decision.sequence)}
+                  >
+                    {decision.action.toUpperCase()} #{String(decision.sequence).padStart(3, "0")}
+                  </button>
+                ))}
+              </nav>
+              <span>{visibleDecisions.length}/{run.decisions.length} actions</span>
+            </div>
             <div className="decision-table" role="table" aria-label="Agent decision tape">
               <div className="decision-row table-labels" role="row"><span>TIME</span><span>ACTION</span><span>SIDE</span><span>PROB.</span><span>EQUITY</span><span>HASH</span></div>
               {visibleDecisions.slice(-8).map((decision) => (
                 <button
                   className={`decision-row ${selected?.sequence === decision.sequence ? "selected" : ""}`}
                   key={decision.sequence}
-                  onClick={() => setSelectedSequence(decision.sequence)}
+                  onClick={() => inspectDecision(decision.sequence)}
                   role="row"
                 >
                   <span className="mono">{time(decision.ts)}</span>
