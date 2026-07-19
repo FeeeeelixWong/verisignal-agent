@@ -40,7 +40,7 @@ export function parseScoreStream(text: string, startTime: number): ScoreMark[] {
       awayScore: scoreValue(record, "2"),
       final: action === "game_finalised" || Number(record.StatusId ?? record.statusId) === 100,
     };
-    const previous = marks.at(-1);
+    const previous = marks[marks.length - 1];
     if (!previous || previous.ts !== mark.ts || previous.action !== mark.action) marks.push(mark);
   }
   return marks.sort((left, right) => left.ts - right.ts || left.seq - right.seq);
@@ -69,7 +69,7 @@ export function normalizeOddsWindow(
     .filter((record) => String(record.SuperOddsType ?? record.superOddsType) === "1X2_PARTICIPANT_RESULT")
     .filter((record) => !(record.MarketPeriod ?? record.marketPeriod))
     .sort((left, right) => Number(left.Ts ?? left.ts) - Number(right.Ts ?? right.ts));
-  const selected = candidates.at(-1);
+  const selected = candidates[candidates.length - 1];
   if (!selected) return undefined;
   const ts = Number(selected.Ts ?? selected.ts ?? windowTs);
   const rawPrices = (selected.Prices ?? selected.prices ?? []).map(Number);

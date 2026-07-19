@@ -19,7 +19,7 @@ export async function runAgent(): Promise<AgentRun> {
     const payload = await oddsProof(entry.messageId, entry.ts);
     proof = await verifyOddsOnChain(payload as any);
   }
-  const auditHead = result.decisions.at(-1)?.decisionHash || "0".repeat(64);
+  const auditHead = result.decisions[result.decisions.length - 1]?.decisionHash || "0".repeat(64);
   const runId = `vs_${sha256({ fixtureId: feed.fixture.fixtureId, policy: defaultPolicy, auditHead }).slice(0, 20)}`;
   return {
     runId,
@@ -34,7 +34,9 @@ export async function runAgent(): Promise<AgentRun> {
       oddsEndpoint: feed.oddsEndpoint,
       scoresEndpoint: feed.scoresEndpoint,
       recordsRead: feed.recordsRead,
-      replayWindow: feed.mode === "txline-replay" ? [showcase.start, showcase.end] : [feed.ticks[0].ts, feed.ticks.at(-1)!.ts],
+      replayWindow: feed.mode === "txline-replay"
+        ? [showcase.start, showcase.end]
+        : [feed.ticks[0].ts, feed.ticks[feed.ticks.length - 1].ts],
     },
     timeline: feed.ticks,
     decisions: result.decisions,
