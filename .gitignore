@@ -9,3 +9,4 @@ coverage
 docs/media
 .env*.local
 output/playwright
+tmp
