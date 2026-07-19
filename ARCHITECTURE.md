@@ -63,7 +63,7 @@ The core strategy is a pure function of `OddsTick[]` and `RiskPolicy`. Each `Dec
 - previous decision hash; and
 - current decision hash.
 
-The hash is SHA-256 over a recursively key-sorted JSON representation of the action body. Replaying identical normalized inputs with the same policy produces the same action sequence and audit head.
+The hash is SHA-256 over a recursively key-sorted JSON representation of the action body; omitted `undefined` fields are excluded exactly as they are during JSON transport. A reviewer can therefore recompute every hash from the public API response. Replaying identical normalized inputs with the same policy produces the same action sequence and audit head.
 
 ## Trust Boundaries
 
