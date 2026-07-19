@@ -8,6 +8,8 @@ The deployed showcase replays a real TxLINE fixture window from France vs Englan
 
 > Paper-execution research software. VeriSignal does not custody funds, place wagers, or deploy live capital.
 
+![VeriSignal showing an autonomous ENTER receipt backed by a TxLINE message and Solana proof](./docs/images/verisignal-entry.png)
+
 ## Judge Fast Path
 
 1. Open the [live strategy desk](https://verisignal-agent.vercel.app). No wallet, account, token, or payment is required.
@@ -35,6 +37,10 @@ Expected evidence from the official replay:
 | Proof depth | `19` |
 
 The result is not hard-coded. Each API request fetches the official historical TxLINE windows and score stream, normalizes the 1X2 market, runs the strategy, retrieves the proof for the entry message, and simulates TxLINE's `validateOdds` instruction against Solana devnet. A clearly labeled generated reference sequence is used only when no TxLINE credential is configured or the upstream service is unavailable.
+
+The same replay also demonstrates refusal to act. A suspended or incomplete quote creates a visible `HALT` receipt with the failed market-completeness check:
+
+![VeriSignal HALT receipt for an incomplete TxLINE market](./docs/images/verisignal-halt.png)
 
 ## Why It Matters
 
